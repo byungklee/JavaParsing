@@ -1,0 +1,20 @@
+package default
+	unique keywords: 7  //import, public, interface, abstract, void, int, double
+	unique UDIs: 0  //
+	unique constants: 0  //
+	unique special chars: 7  //., *, ;, {, (, ), }
+	total keywords: 9  //import, public, interface, abstract, public, void, public, int, double
+	total UDIs: 0  //
+	total constants: 0  //
+	total special chars: 15  //., ., *, ;, {, (, ), ;, (, ), ;, (, ), ;, }
+
+
+class myInterface
+	unique keywords: 6  //public, interface, abstract, void, int, double
+	unique UDIs: 0  //
+	unique constants: 0  //
+	unique special chars: 5  //{, (, ), ;, }
+	total keywords: 8  //public, interface, abstract, public, void, public, int, double
+	total UDIs: 0  //
+	total constants: 0  //
+	total special chars: 11  //{, (, ), ;, (, ), ;, (, ), ;, }

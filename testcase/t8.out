@@ -1,0 +1,23 @@
+package ageofmythology
+	unique keywords: 7  //package, import, public, class, static, void, int
+	unique UDIs: 3  //x, y, z
+	unique constants: 2  //1, 2
+	unique special chars: 11  //;, ., {, (, [, ], ), ,, =, +, }
+	total keywords: 9  //package, import, import, public, class, public, static, void, int
+	total UDIs: 7  //x, y, z, x, x, x, z
+	total constants: 2  //1, 2
+	total special chars: 24  //;, ., ., ;, ., ., ;, {, (, [, ], ), {, ,, =, ,, ;, =, ;, =, +, ;, }, }
+	;, ., ., ;, ., ., ;, {, (, [, ], ), {, ,, =, ,, ;, =, ;, =, +, ;, }, }
+	;, ., ., ;, ., ., ;, {, (, [, ], ), {, ,, =, ,, ;, =, ;, =, +, ;, }, }
+
+
+
+class AgeOfMythology2
+	unique keywords: 5  //public, class, static, void, int
+	unique UDIs: 3  //x, y, z
+	unique constants: 2  //1, 2
+	unique special chars: 10  //{, (, [, ], ), ,, =, ;, +, }
+	total keywords: 6  //public, class, public, static, void, int
+	total UDIs: 7  //x, y, z, x, x, x, z
+	total constants: 2  //1, 2
+	total special chars: 17  //{, (, [, ], ), {, ,, =, ,, ;, =, ;, =, +, ;, }, }
