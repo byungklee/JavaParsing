@@ -574,7 +574,7 @@ methodDeclaration
         (type 
         |   'void' { kAdd("void"); } 	
         )
-        IDENTIFIER { methodStack.push($methodDeclaration.text);} {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text); if($type.text != null) { if(isPrimitive($type.text)) { uAdd( $IDENTIFIER.text);}}} 
+        IDENTIFIER { methodStack.push($methodDeclaration.text);} {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text); if($type.text != null) {  uAdd( $IDENTIFIER.text); }}//if(isPrimitive($type.text)) { uAdd( $IDENTIFIER.text);}}} 
         formalParameters
         ('[' ']' {sAdd("[");sAdd("]");}
         )*
@@ -599,7 +599,7 @@ fieldDeclaration
     ;
 
 variableDeclarator 
-    :   IDENTIFIER {System.out.println("Identifier: "+ $IDENTIFIER.text); if(isPrimitive(lt)) { uAdd($IDENTIFIER.text);} }
+    :   IDENTIFIER {System.out.println("Identifier: "+ $IDENTIFIER.text);  uAdd($IDENTIFIER.text);}//if(isPrimitive(lt)) { uAdd($IDENTIFIER.text);} }
             ('[' ']'{sAdd("[");sAdd("]");}
         )*
         ('=' {lt = "";} variableInitializer{sAdd("=");}
@@ -657,7 +657,7 @@ type
 
 
 classOrInterfaceType 
-    :   IDENTIFIER
+    :   IDENTIFIER { System.out.println("classOrInterfaceType: " + $classOrInterfaceType.text); kAdd($classOrInterfaceType.text); }
         (typeArguments
         )?
         ('.' IDENTIFIER {sAdd(".");}
@@ -720,7 +720,7 @@ formalParameterDecls
     ;
 
 normalParameterDecl 
-    :   variableModifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text);if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+    :   variableModifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text); uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
         ('[' ']' {sAdd("[");sAdd("]");}
         )*
     ;
@@ -830,7 +830,7 @@ annotationTypeElementDeclaration
     ;
 
 annotationMethodDeclaration 
-    :   modifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text);if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+    :   modifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text); uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
         '(' ')' ('default' elementValue {sAdd("(");sAdd(")");kAdd("default");}
                 )?
         ';'  {sAdd(";");}
@@ -951,7 +951,7 @@ catchClause
     ;
 
 formalParameter 
-    :   variableModifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text + " ");if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+    :   variableModifiers type IDENTIFIER {System.out.println("TYPe: " + $type.text + " ");uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
         ('[' ']'{sAdd("[");sAdd("]");}
         )*
     ;
@@ -959,7 +959,7 @@ formalParameter
 forstatement 
     :   
         // enhanced for loop
-        'for' '(' variableModifiers type IDENTIFIER ':'  {kAdd("for"); sAdd("(");sAdd(":");} {System.out.println("TYPe: " + $type.text);if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+        'for' '(' variableModifiers type IDENTIFIER ':'  {kAdd("for"); sAdd("(");sAdd(":");} {System.out.println("TYPe: " + $type.text);uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
         expression ')' statement {sAdd(")");}
             
         // normal for loop
@@ -1318,11 +1318,11 @@ methodHeader
     ;
 
 fieldHeader 
-    :   modifiers type IDENTIFIER ('['']')* ('='|','|';') {System.out.println("TYPe: " + $type.text + $IDENTIFIER.text);if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+    :   modifiers type IDENTIFIER ('['']')* ('='|','|';') {System.out.println("TYPe: " + $type.text + $IDENTIFIER.text); uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
     ;
 
 localVariableHeader 
-    :   variableModifiers type IDENTIFIER ('['']')* ('='|','|';') {System.out.println("TYPe: " + $type.text + $IDENTIFIER.text);if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
+    :   variableModifiers type IDENTIFIER ('['']')* ('='|','|';') {System.out.println("TYPe: " + $type.text + $IDENTIFIER.text); uAdd($IDENTIFIER.text);}//if(isPrimitive($type.text)) { uAdd($IDENTIFIER.text);} }
     ;
 
 
