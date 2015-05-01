@@ -1,5 +1,8 @@
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map.Entry;
 
 public class ClassInfo {
 	String packageName = "";
@@ -15,6 +18,8 @@ public class ClassInfo {
 	LinkedHashSet<String> constantsSet = new LinkedHashSet<String>();
 	LinkedHashSet<String> specialCharsSet = new LinkedHashSet<String>();
 	
+	HashMap<String,Integer> cyclomaticHash = new HashMap<String,Integer>();
+	
 	int operands;
 	int operators;
 	int uOperands;
@@ -28,6 +33,17 @@ public class ClassInfo {
 	public void ascip(String key) {
 		pi.specialChars.add(key);
 		pi.specialCharsSet.add(key);
+	}
+	
+	public void addCycloInfo(String scope, int i) {
+//		if(cyclomaticHash.containsKey(scope)) {
+//			cyclomaticHash.get(scope).add(kind);
+//		} else {
+//			ArrayList<String> temp = new ArrayList<String>();
+//			temp.add(kind);
+//			cyclomaticHash.put(scope, temp);
+//		}
+		cyclomaticHash.put(scope, i);
 	}
 	
 	public String toString() {
@@ -114,6 +130,27 @@ public class ClassInfo {
 		return sb.toString();
 	}
 	
+	public String getStringSuperSimple() {
+		StringBuilder sb= new StringBuilder();
+		sb.append("unique keywords: " + keywordsSet.size());
+		sb.append("\n");
+		sb.append("unique UDIs: " + udisSet.size());
+		sb.append("\n");
+		sb.append("unique constants: " + constantsSet.size());
+		sb.append("\n");
+		sb.append("unique special chars: " + specialCharsSet.size());
+		sb.append("\n");
+		sb.append("total keywords: " + keywords.size());
+		sb.append("\n");
+		sb.append("total UDIs: " + udis.size());
+		sb.append("\n");
+		sb.append("total constants: " + constants.size());
+		sb.append("\n");
+		sb.append("total special chars: " + specialChars.size());
+		sb.append("\n");
+		return sb.toString();
+	}
+	
 	int N;
 	int n;
 	double V;
@@ -123,10 +160,11 @@ public class ClassInfo {
 	double T;
 	
 	public void caclHalstead() {
-		operands = keywords.size() + constants.size();
-		operators = udis.size() + specialChars.size();
-		uOperands = keywordsSet.size() + constantsSet.size();
-		uOperators = udisSet.size() + specialCharsSet.size();
+		operands =  udis.size() + constants.size();
+		operators = keywords.size()+ specialChars.size();
+		uOperands = udisSet.size() + constantsSet.size();
+		uOperators = keywordsSet.size() + specialCharsSet.size();
+		
 		N = HalsteadCalculator.calcProgramLength(getOperators(), getOperands());
 		n = HalsteadCalculator.calcProgramLength(getUniqueOperators(), getUniqueOperands());
 		V = HalsteadCalculator.calcVolume(N, n);
@@ -148,6 +186,11 @@ public class ClassInfo {
 		}
 		sb.append(" " + className);
 		sb.append("\n");
+		sb.append(getStringSuperSimple());
+		
+		sb.append("\n----------------------------\n");
+		sb.append("Halstead Metric Calculation");
+		sb.append("\n----------------------------\n");
 		sb.append("Number of Operators(N1): " + getOperators());
 		sb.append("\n");
 		sb.append("Number of Operands(N2): " + getOperands());
@@ -170,6 +213,35 @@ public class ClassInfo {
 		sb.append("\n");
 		sb.append("Number Of Bugs(B): " + B);
 		sb.append("\n");
+		
+		sb.append(extractCyclomatic());
+		return sb.toString();
+	}
+	
+	public String extractCyclomatic() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n----------------------------\n");
+		sb.append("Cyclomatic Complexity");
+		sb.append("\n----------------------------\n");
+		Iterator it = cyclomaticHash.entrySet().iterator();
+		ArrayList<Integer> values = new ArrayList<Integer>();
+		while(it.hasNext()) {
+			Entry e = (Entry) it.next();
+			int temp = (int) e.getValue();
+			sb.append("Method: " + e.getKey() + " ---- " + temp);
+			sb.append("\n");
+			values.add(temp);
+		}
+		int total = 0;
+		
+		for(Integer i : values) {
+			total += i;
+		}
+		
+		sb.append("Total: " + total);
+		sb.append("\n");
+		sb.append("Average: " + (float) total / values.size());
+		
 		
 		
 		return sb.toString();

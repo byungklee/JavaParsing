@@ -168,12 +168,13 @@ public abstract class AbstractDisplayView extends JPanel {
 	public void updateInformation(PackageInfo pi) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(pi.getStringSimple());
+		//sb.append(pi.getStringSimple());
+		sb.append(pi.getStringHalstead());
 		//pi.getString();
 		sb.append("\n\n");
 		for(int i=0;i<classListModel.getSize();i++) {
 			ClassInfo ci = (ClassInfo) classListModel.getElementAt(i);
-			sb.append(ci.getString());
+			sb.append(ci.getStringHalstead());
 			sb.append("\n");
 		}
 

@@ -20,21 +20,21 @@ public class PackageInfo {
 	int uOperators;
 	
 	public int getOperands() {
-		operands = keywords.size() + constants.size();
+	//	operands =  udis.size() + constants.size();
 		return operands;
 	}
 	
 	public int getOperators() {
-		operators = udis.size() + specialChars.size();
+		//operators = keywords.size()+ specialChars.size();
 		return operators;
 	}
 	public int getUniqueOperands() {
-		uOperands = keywordsSet.size() + constantsSet.size();
+		//uOperands = keywordsSet.size() + constantsSet.size();
 		return uOperands;
 	}
 	
 	public int getUniqueOperators() {
-		uOperators = udisSet.size() + specialCharsSet.size();
+		//uOperators = udisSet.size() + specialCharsSet.size();
 		return uOperators;
 	}
 	
@@ -109,10 +109,10 @@ public class PackageInfo {
 	double T;
 	
 	public void caclHalstead() {
-		operands = keywords.size() + constants.size();
-		operators = udis.size() + specialChars.size();
-		uOperands = keywordsSet.size() + constantsSet.size();
-		uOperators = udisSet.size() + specialCharsSet.size();
+		operands =  udis.size() + constants.size();
+		operators = keywords.size()+ specialChars.size();
+		uOperands = udisSet.size() + constantsSet.size();
+		uOperators = keywordsSet.size() + specialCharsSet.size();
 		N = HalsteadCalculator.calcProgramLength(getOperators(), getOperands());
 		n = HalsteadCalculator.calcProgramLength(getUniqueOperators(), getUniqueOperands());
 		V = HalsteadCalculator.calcVolume(N, n);
@@ -122,18 +122,33 @@ public class PackageInfo {
 		B = HalsteadCalculator.calcNumBugs(V);
 	}
 	
+	public String getStringSuperSimple() {
+		StringBuilder sb= new StringBuilder();
+		sb.append("unique keywords: " + keywordsSet.size());
+		sb.append("\n");
+		sb.append("unique UDIs: " + udisSet.size());
+		sb.append("\n");
+		sb.append("unique constants: " + constantsSet.size());
+		sb.append("\n");
+		sb.append("unique special chars: " + specialCharsSet.size());
+		sb.append("\n");
+		sb.append("total keywords: " + keywords.size());
+		sb.append("\n");
+		sb.append("total UDIs: " + udis.size());
+		sb.append("\n");
+		sb.append("total constants: " + constants.size());
+		sb.append("\n");
+		sb.append("total special chars: " + specialChars.size());
+		sb.append("\n");
+		return sb.toString();
+	}
+	
 	public String getStringHalstead() {
 		caclHalstead();
 		StringBuilder sb = new StringBuilder();
-		if(keywordsSet.contains("class")) {
-			sb.append("class");
-		} else if(keywordsSet.contains("enum")) {
-			sb.append("enum");
-		} else if(keywordsSet.contains("interface")) {
-			sb.append("interface");
-		}
-		sb.append(" " + className);
+		sb.append("package " + packageName);
 		sb.append("\n");
+		sb.append(getStringSuperSimple());
 		sb.append("Number of Operators(N1): " + getOperators());
 		sb.append("\n");
 		sb.append("Number of Operands(N2): " + getOperands());

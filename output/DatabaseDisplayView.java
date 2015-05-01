@@ -79,7 +79,8 @@ public class DatabaseDisplayView extends AbstractDisplayView {
 	}
 	public void updateInformation(ClassInfo ci) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(ci.getString());
+		//sb.append(ci.getString());
+		sb.append(ci.getStringHalstead());
 
 
 		editorPane.setText(sb.toString());

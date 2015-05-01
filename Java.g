@@ -325,6 +325,13 @@ options {
 		return false;
 	}
 	
+	void cyAdd(String scope, int i) {
+		ci.addCycloInfo(scope, i);
+	}
+	
+	int branchCounter = 1;
+	boolean elseTracker = false;
+	
 }
 
 /********************************************************************************************
@@ -558,8 +565,8 @@ methodDeclaration
          modifiers
         (typeParameters
         )?
-        IDENTIFIER { methodStack.push($methodDeclaration.text);} {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text);  }
-        formalParameters
+        IDENTIFIER { kAdd($IDENTIFIER.text);} {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text + " Identifier: " + $IDENTIFIER.text);  }
+        formalParameters {methodStack.push($methodDeclaration.text+$formalParameters.text);branchCounter = 1; }
         ('throws' qualifiedNameList { kAdd("throws"); }
         )?
         '{' { sAdd("{"); }
@@ -567,15 +574,15 @@ methodDeclaration
         )?
         (blockStatement
         )*
-        '}' { sAdd("}"); }         { methodStack.pop();}
+        '}' { sAdd("}"); }         { cyAdd(methodStack.peek(),branchCounter);methodStack.pop();}
         |   modifiers 	
         (typeParameters
         )?
         (type 
         |   'void' { kAdd("void"); } 	
         )
-        IDENTIFIER { methodStack.push($methodDeclaration.text);} {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text); if($type.text != null) {  uAdd( $IDENTIFIER.text); }}//if(isPrimitive($type.text)) { uAdd( $IDENTIFIER.text);}}} 
-        formalParameters
+        IDENTIFIER {System.out.println("Method: " + $methodDeclaration.text + " modi: " + $modifiers.text + " Identifier: " + $IDENTIFIER.text); if($type.text != null) {  uAdd( $IDENTIFIER.text); }}//if(isPrimitive($type.text)) { uAdd( $IDENTIFIER.text);}}} 
+        formalParameters { methodStack.push($IDENTIFIER.text+$formalParameters.text);branchCounter = 1;} { System.out.println("paremters: " + $formalParameters.text);}
         ('[' ']' {sAdd("[");sAdd("]");}
         )*
         ('throws' qualifiedNameList { kAdd("throws"); }
@@ -585,7 +592,7 @@ methodDeclaration
         |   ';' { sAdd(";");}
         )
         
-        { methodStack.pop();}
+        { cyAdd(methodStack.peek(),branchCounter);methodStack.pop();}
     ;
 
 
@@ -893,10 +900,10 @@ statement
         )
         expression (':' expression {sAdd(":");})? ';' {sAdd(";");}
     |   'assert'  expression (':' expression {sAdd(":");})? ';'   {kAdd("assert");sAdd(";");}          
-    |   'if' parExpression statement ('else' statement {kAdd("else");})? {kAdd("if");}         
-    |   forstatement
-    |   'while' parExpression statement {kAdd("while");}
-    |   'do' statement 'while' parExpression ';' {kAdd("do");kAdd("while");sAdd(";");}
+    |   'if'  { kAdd("if");if(!elseTracker) branchCounter++;} parExpression statement ('else' {kAdd("else");branchCounter++;elseTracker = true;} statement {elseTracker = false;})?        
+    |   forstatement {branchCounter++;}
+    |   'while' parExpression statement {kAdd("while");branchCounter++;}
+    |   'do' statement 'while' parExpression ';' {kAdd("do");kAdd("while");sAdd(";");branchCounter++;}
     |   trystatement
     |   'switch' parExpression '{' switchBlockStatementGroups '}' {kAdd("switch");sAdd("{");sAdd("}");}
     |   'synchronized' parExpression block {kAdd("synchronized");}
@@ -915,7 +922,7 @@ statement
     ;
 
 switchBlockStatementGroups 
-    :   (switchBlockStatementGroup )*
+    :   (switchBlockStatementGroup {branchCounter++;})*
     ;
 
 switchBlockStatementGroup 
@@ -946,7 +953,7 @@ catches
     ;
 
 catchClause 
-    :   'catch' '(' formalParameter {kAdd("catch"); sAdd("(");}
+    :   'catch' {branchCounter++;} '(' formalParameter {kAdd("catch"); sAdd("(");}
         ')' block {sAdd(")");}
     ;
 
@@ -1014,19 +1021,19 @@ assignmentOperator
 
 conditionalExpression 
     :   conditionalOrExpression 
-        ('?' expression ':' conditionalExpression {sAdd("?");sAdd(":");} 
+        ('?' { branchCounter++;} expression ':' conditionalExpression {sAdd("?");sAdd(":");} 
         )?
     ;
 
 conditionalOrExpression 
     :   conditionalAndExpression
-        ('||' conditionalAndExpression {sAdd("||");}
+        ('||' conditionalAndExpression {sAdd("||");branchCounter++;}
         )*
     ;
 
 conditionalAndExpression 
     :   inclusiveOrExpression
-        ('&&' inclusiveOrExpression {sAdd("&&");}
+        ('&&' inclusiveOrExpression {sAdd("&&");branchCounter++;}
         )*
     ;
 
@@ -1129,7 +1136,7 @@ unaryExpressionNotPlusMinus
     :   '~' unaryExpression {sAdd("~");}
     |   '!' unaryExpression {sAdd("!");}
     |   castExpression
-    |   primary {System.out.println("Primary : " + $primary.text);if(containsIdentifier($primary.text)){ System.out.println("Adding primary");uAdd($primary.text); }}
+    |   primary {System.out.println("Primary : " + $primary.text);}//if(containsIdentifier($primary.text)){ System.out.println("Adding primary");uAdd($primary.text); }}
         (selector
         )*
         (   '++' {sAdd("++");}
@@ -1152,14 +1159,14 @@ primary
         )*
         (identifierSuffix
         )?
-    |   IDENTIFIER {System.out.println("bkId1");}//{ System.out.println("Here " +  $IDENTIFIER);}
+    |   IDENTIFIER {System.out.println("Indentifiers(UDI): " + $primary.text); uAdd($primary.text);}//{ System.out.println("Here " +  $IDENTIFIER);}
         ('.' IDENTIFIER {sAdd(".");} 
         )*
         (identifierSuffix
         )?
     |   'super' {kAdd("super");}
         superSuffix
-    |   literal        // { System.out.println("Here " +  $literal.text);}
+    |   literal     {}//cAdd($literal.text);}   // { System.out.println("Here " +  $literal.text);}
     |   creator
     |   primitiveType 
         ('[' ']' {sAdd("["); sAdd("]");}
@@ -1273,7 +1280,7 @@ nonWildcardTypeArguments
     ;
 
 arguments 
-    :   '(' (expressionList { sAdd("("); }
+    :   '(' { sAdd("("); } (expressionList 
         )? ')' { sAdd(")"); }
     ;
 

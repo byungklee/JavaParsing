@@ -57,7 +57,13 @@ public class DbAdapter {
 			"total_constant_list text not null, \n" +
 			// "unique_special_char_list text not null, \n" +
 			"total_special_char_list text not null " + ");";
-
+	final String CCM_TABLE = "CREATE TABLE IF NOT EXISTS ccm_data "
+			+ "(id integer primary key AUTOINCREMENT,\n" 
+			+ "package_name text not null,\n"
+			+ "class_name text not null,\n"
+			+ "method_name text not null,\n"
+			+ "m integer not null);";
+			
 	private Connection c;
 	private PreparedStatement insertClassInfoPreparedStatement;
 	private PreparedStatement insertPackageInfoPreparedStatement;
@@ -96,6 +102,21 @@ public class DbAdapter {
 	// + " ?, ?, ?, ?, ?,"
 	// + " ?, ?, ?, ?, ?,"
 	// + " ?, ?, ?);";
+	
+	
+	/**
+	 * To insert or update if exists
+	 * 
+	 * insert or replace into ccm_data(id, package_name,class_name,method_name, m)
+	 * values (
+	 * (select id from ccm_data where package_name='default' and class_name='T2' and method_name='f4'),
+	 *'default',
+	 *'T2',
+	 *'f4',
+	 *8);
+	 */
+	final String INSERT_CCM_DATA = "insert into ccm_data (package_name, class_name, method_name, m) values (?,?,?,?)";
+	final String SELECT_CCM_DATA = "select * from ccm_data where package_name=? and class_name=?";
 
 	private PreparedStatement selectClassByPackagePS;
 	final String SELECT_CLASS_BY_PACKAGE = "select * from class where package_name=?;";
@@ -123,10 +144,84 @@ public class DbAdapter {
 			Statement s = c.createStatement();
 			s.execute(PACKAGE_TABLE);
 			s.execute(CLASS_TABLE);
+			s.execute(CCM_TABLE);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public void insertCCMDataWithClassInfoManager(ClassInfoManager cim) {
+		System.out.println("DEBUG: INSERT CCM DATA " + cim.classInfoMap.size());
+		Iterator it = cim.iterator();
+		while (it.hasNext()) {
+			Entry e = (Entry) it.next();
+			ClassInfo ci = (ClassInfo) e.getValue();
+			System.out.println("WTF: " + ci.cyclomaticHash.size());
+			Iterator it2 = ci.cyclomaticHash.entrySet().iterator();
+			//ArrayList<Integer> values = new ArrayList<Integer>();
+			while(it2.hasNext()) {
+				Entry e2 = (Entry) it2.next();
+//				int temp = ((ArrayList) e.getValue()).size() + 1;
+//				sb.append("Method: " + e.getKey() + " ---- " + temp);
+//				sb.append("\n");
+//				values.add(temp);
+				try {
+					System.out.println("SAVING CCM_DATA " + e2.getKey().toString() + " " + e2.getValue());
+					c = DriverManager.getConnection(CONNECTION_NAME);
+					PreparedStatement s = c.prepareStatement(INSERT_CCM_DATA);
+					s.setString(1, ci.packageName);
+					s.setString(2, ci.className);
+					s.setString(3, e2.getKey().toString());
+					s.setInt(4, (int)e2.getValue());
+					s.executeUpdate();
+					c.close();
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
+			}
+			
+			
+		}
+		
+	}
+	
+	public void insertCCMDataWithClassInfo(ClassInfo ci) {
+			System.out.println("insertCCMDataWithClassInfo ");
+			try {
+				c = DriverManager.getConnection(CONNECTION_NAME);
+				Statement s = c.createStatement();
+				s.execute("delete from ccm_data where package_name=\'"+ci.packageName+ "\' and class_name=\'" + ci.className + "\';");
+				c = DriverManager.getConnection(CONNECTION_NAME);
+				c.close();
+			} catch (Exception ex) {
+				
+			}
+			Iterator it2 = ci.cyclomaticHash.entrySet().iterator();
+			//ArrayList<Integer> values = new ArrayList<Integer>();
+			while(it2.hasNext()) {
+				Entry e2 = (Entry) it2.next();
+//				int temp = ((ArrayList) e.getValue()).size() + 1;
+//				sb.append("Method: " + e.getKey() + " ---- " + temp);
+//				sb.append("\n");
+//				values.add(temp);
+				try {
+					System.out.println("SAVING CCM_DATA " + e2.getKey().toString() + " " + e2.getValue());
+					c = DriverManager.getConnection(CONNECTION_NAME);
+					PreparedStatement s = c.prepareStatement(INSERT_CCM_DATA);
+					s.setString(1, ci.packageName);
+					s.setString(2, ci.className);
+					s.setString(3, e2.getKey().toString());
+					s.setInt(4, (int)e2.getValue());
+					s.executeUpdate();
+					c.close();
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
+			}
+		
 	}
 
 	public void insertClassInfos(ClassInfoManager cim) {
@@ -192,6 +287,8 @@ public class DbAdapter {
 				// ci.specialChars.toString());
 
 				insertClassInfoPreparedStatement.executeUpdate();
+				insertCCMDataWithClassInfo(ci);
+				
 				c.close();
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
@@ -440,6 +537,16 @@ public class DbAdapter {
 						rs.getString(6));
 				databaseToListAndSetForSChar(ci.specialChars, ci.specialCharsSet,
 						rs.getString(7));
+				
+				
+				PreparedStatement ps = c.prepareStatement(SELECT_CCM_DATA);
+				ps.setString(1, ci.packageName);
+				ps.setString(2, ci.className);
+				ResultSet rs2 = ps.executeQuery();
+				while(rs2.next()) {
+					ci.addCycloInfo(rs2.getString(4), rs2.getInt(5));
+				}
+				
 				dlm.addElement(ci);
 			}
 			c.close();
@@ -467,6 +574,8 @@ public class DbAdapter {
 	final String UPDATE_CLASS_INFO = "update class "
 			+ "set total_keyword_list = ?, total_udi_list = ?, total_constant_list = ?, total_special_char_list = ? "
 			+ "where package_name = ? and class_name = ?";
+	
+	
 
 	/*
 	 * UPDATE table_name SET column1 = value1, column2 = value2...., columnN =
@@ -518,6 +627,9 @@ public class DbAdapter {
 			// insertPackageInfoPreparedStatement.setString(17,
 			// pi.specialChars.toString());
 			ps.executeUpdate();
+			
+			insertCCMDataWithClassInfo(ci);
+
 			c.close();
 
 		} catch (SQLException e1) {

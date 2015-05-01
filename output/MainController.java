@@ -155,7 +155,10 @@ public class MainController {
 	}
 	
 	public void saveCurrentInfoToSQL() {
+		System.out.println("Save currentInfoToSql: " + classInfoManager.classInfoMap.size());
 		dbAdapter.insertClassInfos(classInfoManager);
+		//System.out.println("Save2 currentInfoToSql: " + classInfoManager.classInfoMap.size());
+		//dbAdapter.insertCCMData(classInfoManager);
 		dbAdapter.insertPackageInfos(packageInfoManager);
 		System.out.println("Saving Done!");
 	}
