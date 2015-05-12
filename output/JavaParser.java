@@ -1,22 +1,11 @@
-// $ANTLR 3.5.1 /Users/byung/workspace/antlr2/Java.g 2015-05-01 13:10:43
+// $ANTLR 3.5.1 /Users/byung/workspace/antlr2/Java.g 2015-05-02 22:19:08
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import org.antlr.runtime.*;
 import java.util.Stack;
-
-import org.antlr.runtime.BaseRecognizer;
-import org.antlr.runtime.BitSet;
-import org.antlr.runtime.DFA;
-import org.antlr.runtime.EarlyExitException;
-import org.antlr.runtime.IntStream;
-import org.antlr.runtime.MismatchedSetException;
-import org.antlr.runtime.NoViableAltException;
-import org.antlr.runtime.Parser;
-import org.antlr.runtime.ParserRuleReturnScope;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.RecognizerSharedState;
-import org.antlr.runtime.Token;
-import org.antlr.runtime.TokenStream;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 /** A Java 1.5 grammar for ANTLR v3 derived from the spec
  *
@@ -8371,7 +8360,7 @@ public class JavaParser extends Parser {
 					// /Users/byung/workspace/antlr2/Java.g:903:9: 'if' parExpression statement ( 'else' statement )?
 					{
 					match(input,IF,FOLLOW_IF_in_statement4716); if (state.failed) return;
-					if ( state.backtracking==0 ) { kAdd("if");if(!elseTracker) branchCounter++;}
+					if ( state.backtracking==0 ) { kAdd("if"); branchCounter++;}
 					pushFollow(FOLLOW_parExpression_in_statement4721);
 					parExpression();
 					state._fsp--;
@@ -8380,7 +8369,7 @@ public class JavaParser extends Parser {
 					statement();
 					state._fsp--;
 					if (state.failed) return;
-					// /Users/byung/workspace/antlr2/Java.g:903:87: ( 'else' statement )?
+					// /Users/byung/workspace/antlr2/Java.g:903:71: ( 'else' statement )?
 					int alt97=2;
 					int LA97_0 = input.LA(1);
 					if ( (LA97_0==ELSE) ) {
@@ -8391,10 +8380,10 @@ public class JavaParser extends Parser {
 					}
 					switch (alt97) {
 						case 1 :
-							// /Users/byung/workspace/antlr2/Java.g:903:88: 'else' statement
+							// /Users/byung/workspace/antlr2/Java.g:903:72: 'else' statement
 							{
 							match(input,ELSE,FOLLOW_ELSE_in_statement4726); if (state.failed) return;
-							if ( state.backtracking==0 ) {kAdd("else");branchCounter++;elseTracker = true;}
+							if ( state.backtracking==0 ) {kAdd("else"); elseTracker = true;}
 							pushFollow(FOLLOW_statement_in_statement4730);
 							statement();
 							state._fsp--;
@@ -14031,8 +14020,8 @@ public class JavaParser extends Parser {
 
 	// $ANTLR start synpred133_Java
 	public final void synpred133_Java_fragment() throws RecognitionException {
-		// /Users/byung/workspace/antlr2/Java.g:903:88: ( 'else' statement )
-		// /Users/byung/workspace/antlr2/Java.g:903:88: 'else' statement
+		// /Users/byung/workspace/antlr2/Java.g:903:72: ( 'else' statement )
+		// /Users/byung/workspace/antlr2/Java.g:903:72: 'else' statement
 		{
 		match(input,ELSE,FOLLOW_ELSE_in_synpred133_Java4726); if (state.failed) return;
 		pushFollow(FOLLOW_statement_in_synpred133_Java4730);

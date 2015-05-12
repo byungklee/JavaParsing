@@ -1,4 +1,4 @@
-// $ANTLR 3.5.1 /Users/byung/workspace/antlr2/Java.g 2015-05-01 13:10:46
+// $ANTLR 3.5.1 /Users/byung/workspace/antlr2/Java.g 2015-05-02 22:19:11
 
 import org.antlr.runtime.*;
 import java.util.Stack;
@@ -136,11 +136,6 @@ public class JavaLexer extends Lexer {
 	}
 	public JavaLexer(CharStream input, RecognizerSharedState state) {
 		super(input,state);
-	}
-	public boolean extra;
-	public JavaLexer(CharStream input, boolean b) {
-		this(input);
-		extra = b;
 	}
 	@Override public String getGrammarFileName() { return "/Users/byung/workspace/antlr2/Java.g"; }
 

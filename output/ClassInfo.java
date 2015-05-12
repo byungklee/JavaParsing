@@ -242,6 +242,8 @@ public class ClassInfo {
 		sb.append("\n");
 		sb.append("Average: " + (float) total / values.size());
 		
+		sb.append("\n");
+		sb.append("\n");
 		
 		
 		return sb.toString();

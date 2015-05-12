@@ -900,7 +900,7 @@ statement
         )
         expression (':' expression {sAdd(":");})? ';' {sAdd(";");}
     |   'assert'  expression (':' expression {sAdd(":");})? ';'   {kAdd("assert");sAdd(";");}          
-    |   'if'  { kAdd("if");if(!elseTracker) branchCounter++;} parExpression statement ('else' {kAdd("else");branchCounter++;elseTracker = true;} statement {elseTracker = false;})?        
+    |   'if'  { kAdd("if"); branchCounter++;} parExpression statement ('else' {kAdd("else"); elseTracker = true;} statement {elseTracker = false;})?        
     |   forstatement {branchCounter++;}
     |   'while' parExpression statement {kAdd("while");branchCounter++;}
     |   'do' statement 'while' parExpression ';' {kAdd("do");kAdd("while");sAdd(";");branchCounter++;}
